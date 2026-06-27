@@ -18,7 +18,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,31 +30,26 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users")
 public class UserEntity {
-	
+
 	@Id
-	@GeneratedValue(strategy =GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@Column(name="first_name", nullable=false, length=512)
+
+	@Column(name = "first_name", nullable = false, length = 512)
 	private String firstName;
-	
-	@Column(name="last_name", nullable=false, length=512)
+
+	@Column(name = "last_name", nullable = false, length = 512)
 	private String lastName;
-	
-	@Column(
-		    name = "email",
-		    nullable = false,
-		    unique = true,
-		    length = 255
-		)
-		private String email;
-	
-	@Column(name="mobile_no", nullable=false, unique=true)
+
+	@Column(name = "email", nullable = false, unique = true, length = 255)
+	private String email;
+
+	@Column(name = "mobile_no", nullable = false, unique = true)
 	private Long mobile;
-	
-	@Column(name="password", nullable=false, length = 255)
+
+	@Column(name = "password", nullable = false, length = 255)
 	private String password;
-	
+
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
@@ -64,13 +58,13 @@ public class UserEntity {
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
-	
+
 	@Column(name = "failed_login_attempts")
 	private int failedLoginAttempts;
 
 	@Column(name = "account_locked")
 	private boolean accountLocked;
-	
+
 	private Boolean isDeleted;
 
 	@CreationTimestamp
@@ -78,8 +72,7 @@ public class UserEntity {
 
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
-	
+
 	private LocalDate lastLogin;
 
-	
 }
