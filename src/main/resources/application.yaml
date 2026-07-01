@@ -33,8 +33,8 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
 
 jwt:
-  secret: your-secret-key
-  expiration: 86400000
+  secret: Y2Y4NzA2ODU3N2NhZjEzZjNkNzNkY_IDENTITY_HUB_AProductForUserManagement2026
+  expiration: 1800000 #30 min
 
 cors:
   allowed-origins:

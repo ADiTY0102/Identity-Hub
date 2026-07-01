@@ -155,26 +155,32 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDTO activateUser(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		UserEntity user = userRepo.findById(id)
+				.orElseThrow(()->
+				new ResourceNotFoundException("User with id"+ id +"not found"));
+		user.setStatus(UserStatus.ACTIVE);
+		user.setAccountLocked(false);
+		
+		UserEntity updatedUserStatus = userRepo.save(user);
+		return mapToResponse(updatedUserStatus);
 	}
 
 	@Override
 	public UserResponseDTO blockUser(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		UserEntity user = userRepo.findById(id)
+				.orElseThrow(()->
+				new ResourceNotFoundException("User with id"+ id +"\not found"));
+		user.setStatus(UserStatus.BLOCKED);
+		user.setAccountLocked(true);
+		
+		UserEntity userBlocked = userRepo.save(user);
+		return mapToResponse(userBlocked);
 	}
 
 	@Override
 	public void changePassword(Long userId, ChangePasswordDTO request) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public RegisterRequestDTO changePassword(String oldPassword, String newPassword) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

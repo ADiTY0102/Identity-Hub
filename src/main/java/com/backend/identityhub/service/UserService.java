@@ -23,6 +23,4 @@ public interface UserService {
     UserResponseDTO activateUser(Long id);
 
     UserResponseDTO blockUser(Long id);
-
-	RegisterRequestDTO changePassword(String oldPassword, String newPassword);
 }
