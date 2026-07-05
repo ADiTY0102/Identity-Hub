@@ -1,5 +1,6 @@
 package com.backend.identityhub.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,6 +35,7 @@ public class UserController {
 	 * POST /api/v1/users
 	 * */
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<UserResponseDTO> createUser(
 			@Valid
 			@RequestBody
@@ -50,6 +52,7 @@ public class UserController {
 	 * GET /api/v1/users/{id}
 	 * */
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public ResponseEntity<UserResponseDTO>getUserById(@PathVariable Long id){
 		return ResponseEntity.ok(userService.getUserById(id));
 	}
@@ -59,6 +62,7 @@ public class UserController {
 	 * GET /api/v1/users
 	 * */
 	@GetMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity <List<UserResponseDTO>> getAllUsers(){
 		return ResponseEntity.ok(userService.getAllUsers());
 	}
@@ -69,6 +73,7 @@ public class UserController {
 	 * PUT /api/v1/users/{id}
 	 * */
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public ResponseEntity<UserResponseDTO> updateUser(
 	        @PathVariable Long id,
 	        @Valid @RequestBody RegisterRequestDTO request) {
@@ -81,6 +86,7 @@ public class UserController {
      * DELETE /api/v1/users/{id}
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(
             @PathVariable Long id) {
 
@@ -92,7 +98,8 @@ public class UserController {
      * Activate the user
      * PATCH /api/v1/users/activate/{id}
      */
-    @PatchMapping("/activate/{id")
+    @PatchMapping("/activate/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> activateUser(@PathVariable Long id){
     	return ResponseEntity.ok(userService.activateUser(id));
     }
@@ -100,7 +107,8 @@ public class UserController {
      * Block the user
      * PATCH /api/v1/users/block/{id}
      */
-    @PatchMapping("/block/{id")
+    @PatchMapping("/block/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> blockUser(@PathVariable Long id){
     	return ResponseEntity.ok(userService.blockUser(id));
     }
@@ -109,6 +117,7 @@ public class UserController {
      * PATCH /api/v1/users/change-password/{id}
      */
     @PatchMapping("/change-password/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<String> changePassword(
             @PathVariable Long id,
             @Valid @RequestBody ChangePasswordDTO request) {

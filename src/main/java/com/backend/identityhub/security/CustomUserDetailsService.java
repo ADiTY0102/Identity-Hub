@@ -1,6 +1,7 @@
 package com.backend.identityhub.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,11 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 	private final UserRepository userRepository;
 	
-	public UserDetails loadUSersByUsername(String username) 
+	@Override
+	public UserDetails loadUserByUsername(String username) 
 			throws UsernameNotFoundException{
 		UserEntity user = userRepository
 				.findByEmailAndIsDeletedFalse(username)

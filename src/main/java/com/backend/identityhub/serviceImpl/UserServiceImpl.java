@@ -2,7 +2,7 @@ package com.backend.identityhub.serviceImpl;
 
 import java.util.List;
 
-import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.identityhub.dto.request.ChangePasswordDTO;
@@ -22,10 +22,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@SuppressWarnings("null")
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepo;
-	// private final PasswordEncoder passEncoder;
+	private final PasswordEncoder passwordEncoder;
 
 	private UserResponseDTO mapToResponse(UserEntity user) {
 
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
 				.id(user.getId())
 				.firstName(user.getFirstName())
 				.lastName(user.getLastName())
-				.emailId(user.getEmail())
+				.email(user.getEmail())
 				.mobile(user.getMobile())
 				.role(user.getRole())
 				.gender(user.getGender())
@@ -65,9 +66,8 @@ public class UserServiceImpl implements UserService {
 				.lastName(request.getLastName())
 				.email(request.getEmail())
 				.mobile(request.getMobile())
-				.password(request.getPassword())
+				.password(passwordEncoder.encode(request.getPassword()))
 				.gender(request.getGender())
-				// .password(passwordEncoder.encode(request.getPassword()))
 				.role(Role.USER)
 				.status(UserStatus.ACTIVE)
 				.isDeleted(false)
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
 	 * Get user Data By Id
 	 */
 	@Override
-	public UserResponseDTO getUserById(@NonNull Long id) {
+	public UserResponseDTO getUserById(Long id) {
 
 		UserEntity user = userRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException(
@@ -156,11 +156,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDTO activateUser(Long id) {
 		UserEntity user = userRepo.findById(id)
-				.orElseThrow(()->
-				new ResourceNotFoundException("User with id"+ id +"not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("User with id" + id + "not found"));
 		user.setStatus(UserStatus.ACTIVE);
 		user.setAccountLocked(false);
-		
+
 		UserEntity updatedUserStatus = userRepo.save(user);
 		return mapToResponse(updatedUserStatus);
 	}
@@ -168,19 +167,27 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDTO blockUser(Long id) {
 		UserEntity user = userRepo.findById(id)
-				.orElseThrow(()->
-				new ResourceNotFoundException("User with id"+ id +"\not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
 		user.setStatus(UserStatus.BLOCKED);
 		user.setAccountLocked(true);
-		
+
 		UserEntity userBlocked = userRepo.save(user);
 		return mapToResponse(userBlocked);
 	}
 
 	@Override
 	public void changePassword(Long userId, ChangePasswordDTO request) {
-		// TODO Auto-generated method stub
 
+		UserEntity user = userRepo.findByIdAndIsDeletedFalse(userId)
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"User not found with ID: " + userId));
+
+		if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("Old password is incorrect.");
+		}
+
+		user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+		userRepo.save(user);
 	}
 
 }

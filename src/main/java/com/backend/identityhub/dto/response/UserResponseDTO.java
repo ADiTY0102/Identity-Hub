@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -21,12 +20,12 @@ public class UserResponseDTO {
 
 	private String lastName;
 
-	private String emailId;
+	private String email;
 
 	private Long mobile;
 
 	private Role role;
-	
+
 	private Gender gender;
 
 	private UserStatus status;

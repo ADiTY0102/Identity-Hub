@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import com.backend.identityhub.enums.Gender;
 import com.backend.identityhub.enums.Role;
 import com.backend.identityhub.enums.UserStatus;

@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.backend.identityhub.security.CustomUserDetailsService;
 import com.backend.identityhub.security.JwtAuthenticationEntryPoint;
 import com.backend.identityhub.security.JwtAuthenticationFilter;
+import com.backend.identityhub.security.CustomAccessDeniedHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,19 +33,19 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @SuppressWarnings("deprecation")
-	@Bean
+    @Bean
     AuthenticationProvider authenticationProvider() {
 
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 
-        provider.setUserDetailsService((UserDetailsService) customUserDetailsService);
+        provider.setUserDetailsService(customUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
 
         return provider;
@@ -59,6 +59,7 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
+    @SuppressWarnings("null")
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
@@ -73,8 +74,9 @@ public class SecurityConfig {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
             
-            .exceptionHandling(exception ->
-            	exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+            .exceptionHandling(exception -> exception
+            	.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            	.accessDeniedHandler(customAccessDeniedHandler))
 
             .authorizeHttpRequests(auth -> auth
 
